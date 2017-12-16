@@ -210,6 +210,27 @@ func (api *API) Host(method string, data interface{}) ([]ZabbixHost, error) {
 }
 
 /**
+Interface to the hostinterface.* calls
+*/
+func (api *API) HostInterface(method string, data interface{}) ([]ZabbixHost, error) {
+	fmt.Println(data)
+	response, err := api.ZabbixRequest("hostinterface."+method, data)
+	if err != nil {
+		return nil, err
+	}
+	if response.Error.Code != 0 {
+		return nil, &response.Error
+	}
+
+	// XXX uhg... there has got to be a better way to convert the response
+	// to the type I want to return
+	res, err := json.Marshal(response.Result)
+	var ret []ZabbixHost
+	err = json.Unmarshal(res, &ret)
+	return ret, nil
+}
+
+/**
 Interface to the graph.* calls
 */
 func (api *API) Graph(method string, data interface{}) ([]ZabbixGraph, error) {
