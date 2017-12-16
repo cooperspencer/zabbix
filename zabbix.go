@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"crypto/tls"
 )
 
 /**
@@ -53,13 +54,14 @@ type API struct {
 	url    string
 	user   string
 	passwd string
+	verify bool
 	id     int
 	auth   string
 	Client *http.Client
 }
 
-func NewAPI(server, user, passwd string) (*API, error) {
-	return &API{server, user, passwd, 0, "", &http.Client{}}, nil
+func NewAPI(server, user, passwd string, verify bool) (*API, error) {
+	return &API{server, user, passwd, verify, 0, "", &http.Client{}}, nil
 }
 
 func (api *API) GetAuth() string {
@@ -83,6 +85,10 @@ func (api *API) ZabbixRequest(method string, data interface{}) (JsonRPCResponse,
 	}
 
 	// Setup our HTTP request
+	if api.verify == false {
+		tr := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+		api.Client.Transport = tr
+	}
 	request, err := http.NewRequest("POST", api.url, bytes.NewBuffer(encoded))
 	if err != nil {
 		return JsonRPCResponse{}, err
