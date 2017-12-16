@@ -11,7 +11,33 @@ Connecting to the API
 
 ```go
 func main() {
-    api, err := zabbix.NewAPI("http://zabbix.yourhost.net/api_jsonrpc.php", "User", "Password")
+    api, err := zabbix.NewAPI("http://zabbix.yourhost.net/api_jsonrpc.php", "User", "Password", true)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    versionresult, err := api.Version()
+    if err != nil {
+        fmt.Println(err)
+    }
+
+    fmt.Println(versionresult)
+
+    _, err = api.Login()
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    fmt.Println("Connected to API")
+}
+```
+
+Connecting to a server with an unsigned certificate
+===================================================
+```go
+func main() {
+    api, err := zabbix.NewAPI("http://zabbix.yourhost.net/api_jsonrpc.php", "User", "Password", false)
     if err != nil {
         fmt.Println(err)
         return
