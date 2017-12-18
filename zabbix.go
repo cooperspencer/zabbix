@@ -213,7 +213,6 @@ func (api *API) Host(method string, data interface{}) ([]ZabbixHost, error) {
 Interface to the hostinterface.* calls
 */
 func (api *API) HostInterface(method string, data interface{}) ([]ZabbixHost, error) {
-	fmt.Println(data)
 	response, err := api.ZabbixRequest("hostinterface."+method, data)
 	if err != nil {
 		return nil, err
